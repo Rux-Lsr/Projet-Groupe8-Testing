@@ -72,7 +72,7 @@
     <header>
       <h1>Véhicules Propelize</h1>
       <div>
-        <a href="/users.html" style="color: #fff; margin-right: 1rem"
+        <a href="users.html" style="color: #fff; margin-right: 1rem"
           >Gestion utilisateurs</a
         >
         <button class="logout" onclick="logout()">Déconnexion</button>
@@ -100,12 +100,12 @@
     </main>
     <script>
       async function fetchVehicles() {
-        const res = await fetch("http://localhost:3000/vehicles", {
+        const res = await fetch("http://localhost:3000/api/vehicles", {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
           },
         });
-        if (res.status === 401) return (window.location.href = "/login");
+        if (res.status === 401) return (window.location.href = "login.hml");
         const vehicles = await res.json();
         const tbody = document.querySelector("#vehiclesTable tbody");
         tbody.innerHTML = "";
@@ -168,7 +168,7 @@
         // Pour la démo, on ne fait qu'un prompt simple
         const newPrice = prompt("Nouveau prix/jour ?");
         if (!newPrice) return;
-        const res = await fetch(`http://localhost:3000/vehicles/${id}`, {
+        const res = await fetch(`http://localhost:3000/api/vehicles/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -182,7 +182,7 @@
 
       async function deleteVehicle(id) {
         if (!confirm("Supprimer ce véhicule ?")) return;
-        const res = await fetch(`http://localhost:3000/vehicles/${id}`, {
+        const res = await fetch(`http://localhost:3000/api/vehicles/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),

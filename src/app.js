@@ -1,6 +1,6 @@
 const express = require("express");
 const YAML = require("yamljs");
-
+const cors = require("cors");
 const vehicleRoutes = require("./routes/vehicleRoutes");
 const UserRouter = require("./routes/userRoute");
 const swaggerUi = require("swagger-ui-express");
@@ -12,6 +12,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/users", UserRouter);
+app.use(cors());
 
 // Middleware d'erreur
 app.use((err, req, res, next) => {

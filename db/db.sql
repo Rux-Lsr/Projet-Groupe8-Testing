@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Données de base
-INSERT INTO vehicles (registration_number, make, model, year, rental_price) VALUES
+INSERT INTO vehicles (registrationNumber, make, model, year, rentalPrice) VALUES
 ('ABC123', 'Toyota', 'Camry', 2022, 45.50),
 ('XYZ789', 'Honda', 'Civic', 2023, 50.00);
 

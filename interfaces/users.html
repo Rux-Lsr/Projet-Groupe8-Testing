@@ -1,4 +1,4 @@
-<!-- users.html -->
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -71,7 +71,7 @@
   <body>
     <header>
       <h1>Gestion des utilisateurs</h1>
-      <button class="back" onclick="window.location.href='/vehicles'">
+      <button class="back" onclick="window.location.href='vehicle.html'">
         ← Véhicules
       </button>
     </header>
@@ -94,7 +94,7 @@
     </main>
     <script>
       async function fetchUsers() {
-        const res = await fetch("http://localhost:3000/users", {
+        const res = await fetch("http://localhost:3000/api/users", {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
           },
@@ -150,7 +150,7 @@
       async function editUser(id, name) {
         const newName = prompt("Nouveau nom ?", name);
         if (!newName) return;
-        const res = await fetch(`http://localhost:3000/users/${id}`, {
+        const res = await fetch(`http://localhost:3000/api/users/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -164,7 +164,7 @@
 
       async function deleteUser(id) {
         if (!confirm("Supprimer cet utilisateur ?")) return;
-        const res = await fetch(`http://localhost:3000/users/${id}`, {
+        const res = await fetch(`http://localhost:3000/api/users/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),

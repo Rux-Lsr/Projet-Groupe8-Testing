@@ -9,7 +9,8 @@
     "test": "vitest run",
     "test:unit": "vitest run tests/unit/",
     "test:integration": "vitest run tests/integration/",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "test:e2e": "npx playwright playwright-test"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,8 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.53.2",
+    "playwright": "^1.53.2",
     "supertest": "^7.1.1",
     "vitest": "^3.2.4"
   }

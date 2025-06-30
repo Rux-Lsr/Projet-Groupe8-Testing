@@ -1,0 +1,90 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Propelize - Connexion</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      .login-container {
+        background: #fff;
+        padding: 2rem 2.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 16px #0001;
+        width: 320px;
+      }
+      h2 {
+        text-align: center;
+        color: #2a4d69;
+      }
+      label {
+        display: block;
+        margin-top: 1rem;
+        color: #2a4d69;
+      }
+      input {
+        width: 100%;
+        padding: 0.7rem;
+        margin-top: 0.3rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding: 0.8rem;
+        background: #2a4d69;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      .error {
+        color: #d7263d;
+        margin-top: 1rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Connexion Propelize</h2>
+      <form id="loginForm">
+        <label for="name">Nom d'utilisateur</label>
+        <input type="text" id="name" name="name" required />
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required />
+        <button type="submit">Se connecter</button>
+        <div class="error" id="errorMsg"></div>
+      </form>
+    </div>
+    <script>
+      document.getElementById("loginForm").onsubmit = async function (e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const password = document.getElementById("password").value;
+        const res = await fetch("http://localhost:3000/users/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, password }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem("accessToken", data.accessToken);
+          window.location.href = "/vehicles.html";
+        } else {
+          document.getElementById("errorMsg").textContent =
+            data.error || "Erreur de connexion";
+        }
+      };
+    </script>
+  </body>
+</html>

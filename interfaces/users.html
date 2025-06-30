@@ -1,0 +1,178 @@
+<!-- users.html -->
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Propelize - Utilisateurs</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+      }
+      header {
+        background: #2a4d69;
+        color: #fff;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        margin: 0;
+      }
+      .back {
+        background: #4bb543;
+        border: none;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      main {
+        max-width: 700px;
+        margin: 2rem auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 16px #0001;
+        padding: 2rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+      th,
+      td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+      }
+      th {
+        background: #f0f4f8;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .add-btn {
+        background: #2a4d69;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        float: right;
+      }
+      .actions button {
+        margin-right: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Gestion des utilisateurs</h1>
+      <button class="back" onclick="window.location.href='/vehicles'">
+        ← Véhicules
+      </button>
+    </header>
+    <main>
+      <button class="add-btn" onclick="showAddUserForm()">
+        + Ajouter un utilisateur
+      </button>
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Mot de passe</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="userFormContainer"></div>
+    </main>
+    <script>
+      async function fetchUsers() {
+        const res = await fetch("http://localhost:3000/users", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        });
+        if (res.status === 401) return (window.location.href = "/login");
+        const users = await res.json();
+        const tbody = document.querySelector("#usersTable tbody");
+        tbody.innerHTML = "";
+        users.forEach((u) => {
+          tbody.innerHTML += `
+          <tr>
+            <td>${u.id}</td>
+            <td>${u.name}</td>
+            <td>${u.password}</td>
+            <td class=\"actions\">
+              <button onclick=\"editUser(${u.id}, '${u.name}')\">✏️</button>
+              <button onclick=\"deleteUser(${u.id})\">🗑️</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+      fetchUsers();
+
+      function showAddUserForm() {
+        document.getElementById("userFormContainer").innerHTML = `
+        <form id=\"addUserForm\" style=\"margin-top:1rem;\">
+          <input name=\"name\" placeholder=\"Nom\" required>
+          <input name=\"password\" type=\"password\" placeholder=\"Mot de passe\" required>
+          <button type=\"submit\">Ajouter</button>
+        </form>
+      `;
+        document.getElementById("addUserForm").onsubmit = async function (e) {
+          e.preventDefault();
+          const data = Object.fromEntries(new FormData(this));
+          const res = await fetch("http://localhost:3000/users/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            fetchUsers();
+            this.remove();
+          } else {
+            alert("Erreur lors de l'ajout");
+          }
+        };
+      }
+
+      async function editUser(id, name) {
+        const newName = prompt("Nouveau nom ?", name);
+        if (!newName) return;
+        const res = await fetch(`http://localhost:3000/users/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+          body: JSON.stringify({ name: newName }),
+        });
+        if (res.ok) fetchUsers();
+        else alert("Erreur lors de la modification");
+      }
+
+      async function deleteUser(id) {
+        if (!confirm("Supprimer cet utilisateur ?")) return;
+        const res = await fetch(`http://localhost:3000/users/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        });
+        if (res.ok) fetchUsers();
+        else alert("Erreur lors de la suppression");
+      }
+    </script>
+  </body>
+</html>

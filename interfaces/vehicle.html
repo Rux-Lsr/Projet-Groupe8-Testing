@@ -1,0 +1,196 @@
+<!-- vehicles.html -->
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Propelize - Véhicules</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+      }
+      header {
+        background: #2a4d69;
+        color: #fff;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        margin: 0;
+      }
+      .logout {
+        background: #d7263d;
+        border: none;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      main {
+        max-width: 900px;
+        margin: 2rem auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 16px #0001;
+        padding: 2rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+      th,
+      td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+      }
+      th {
+        background: #f0f4f8;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .add-btn {
+        background: #4bb543;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        float: right;
+      }
+      .actions button {
+        margin-right: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Véhicules Propelize</h1>
+      <div>
+        <a href="/users.html" style="color: #fff; margin-right: 1rem"
+          >Gestion utilisateurs</a
+        >
+        <button class="logout" onclick="logout()">Déconnexion</button>
+      </div>
+    </header>
+    <main>
+      <button class="add-btn" onclick="showAddForm()">
+        + Ajouter un véhicule
+      </button>
+      <table id="vehiclesTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Immatriculation</th>
+            <th>Marque</th>
+            <th>Modèle</th>
+            <th>Année</th>
+            <th>Prix/jour</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="formContainer"></div>
+    </main>
+    <script>
+      async function fetchVehicles() {
+        const res = await fetch("http://localhost:3000/vehicles", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        });
+        if (res.status === 401) return (window.location.href = "/login");
+        const vehicles = await res.json();
+        const tbody = document.querySelector("#vehiclesTable tbody");
+        tbody.innerHTML = "";
+        vehicles.forEach((v) => {
+          tbody.innerHTML += `
+          <tr>
+            <td>${v.id}</td>
+            <td>${v.registrationNumber}</td>
+            <td>${v.make}</td>
+            <td>${v.model}</td>
+            <td>${v.year}</td>
+            <td>${v.rentalPrice} €</td>
+            <td class=\"actions\">
+              <button onclick=\"editVehicle(${v.id})\">✏️</button>
+              <button onclick=\"deleteVehicle(${v.id})\">🗑️</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+      fetchVehicles();
+
+      function logout() {
+        localStorage.removeItem("accessToken");
+        window.location.href = "/login.html";
+      }
+
+      function showAddForm() {
+        document.getElementById("formContainer").innerHTML = `
+        <form id=\"addForm\" style=\"margin-top:1rem;\">
+          <input name=\"registrationNumber\" placeholder=\"Immatriculation\" required>
+          <input name=\"make\" placeholder=\"Marque\" required>
+          <input name=\"model\" placeholder=\"Modèle\" required>
+          <input name=\"year\" type=\"number\" placeholder=\"Année\" required>
+          <input name=\"rentalPrice\" type=\"number\" step=\"0.01\" placeholder=\"Prix/jour\" required>
+          <button type=\"submit\">Ajouter</button>
+        </form>
+      `;
+        document.getElementById("addForm").onsubmit = async function (e) {
+          e.preventDefault();
+          const data = Object.fromEntries(new FormData(this));
+          const res = await fetch("http://localhost:3000/vehicles", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            fetchVehicles();
+            this.remove();
+          } else {
+            alert("Erreur lors de l'ajout");
+          }
+        };
+      }
+
+      async function editVehicle(id) {
+        // Pour la démo, on ne fait qu'un prompt simple
+        const newPrice = prompt("Nouveau prix/jour ?");
+        if (!newPrice) return;
+        const res = await fetch(`http://localhost:3000/vehicles/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+          body: JSON.stringify({ rentalPrice: newPrice }),
+        });
+        if (res.ok) fetchVehicles();
+        else alert("Erreur lors de la modification");
+      }
+
+      async function deleteVehicle(id) {
+        if (!confirm("Supprimer ce véhicule ?")) return;
+        const res = await fetch(`http://localhost:3000/vehicles/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+          },
+        });
+        if (res.ok) fetchVehicles();
+        else alert("Erreur lors de la suppression");
+      }
+    </script>
+  </body>
+</html>

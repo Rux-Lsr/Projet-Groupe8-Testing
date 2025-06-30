@@ -1,1 +1,37 @@
+name: CI Propelize
 
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint (ESLint)
+        run: |
+          npx eslint . || true
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests (front-end)
+        run: npm run test:e2e
+
+      - name: Run backend tests (Vitest)
+        run: npm test
+        env:
+          NODE_ENV: test

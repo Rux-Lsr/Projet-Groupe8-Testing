@@ -10,8 +10,8 @@ const app = express();
 const swaggerDocument = YAML.load("./src/config/openapi.yaml");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
-app.use("/vehicles", vehicleRoutes);
-app.use("/users", UserRouter);
+app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/users", UserRouter);
 
 // Middleware d'erreur
 app.use((err, req, res, next) => {

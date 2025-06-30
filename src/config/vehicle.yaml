@@ -1,0 +1,270 @@
+openapi: 3.0.0
+info:
+  title: API Véhicules Propelize
+  version: 1.0.0
+  description: API de gestion des véhicules pour le système de location Propelize
+
+servers:
+  - url: http://localhost:3000/api
+    description: Serveur de développement
+
+paths:
+  /vehicles:
+    post:
+      tags:
+        - Véhicules
+      summary: Créer un nouveau véhicule
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleInput"
+      responses:
+        "201":
+          description: Véhicule créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+        "400":
+          description: Données invalides
+        "401":
+          description: Non autorisé
+
+    get:
+      tags:
+        - Véhicules
+      summary: Lister tous les véhicules
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+      responses:
+        "200":
+          description: Liste des véhicules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehicle"
+        "401":
+          description: Non autorisé
+
+  /vehicles/{id}:
+    get:
+      tags:
+        - Véhicules
+      summary: Obtenir un véhicule par ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      responses:
+        "200":
+          description: Détails du véhicule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+        "404":
+          description: Véhicule non trouvé
+        "401":
+          description: Non autorisé
+
+    put:
+      tags:
+        - Véhicules
+      summary: Mettre à jour un véhicule
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleUpdate"
+      responses:
+        "200":
+          description: Véhicule mis à jour
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "404":
+          description: Véhicule non trouvé
+        "401":
+          description: Non autorisé
+
+    delete:
+      tags:
+        - Véhicules
+      summary: Supprimer un véhicule
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      responses:
+        "204":
+          description: Véhicule supprimé
+        "404":
+          description: Véhicule non trouvé
+        "401":
+          description: Non autorisé
+
+  /vehicles/search/{registrationNumber}:
+    get:
+      tags:
+        - Véhicules
+      summary: Rechercher un véhicule par immatriculation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: registrationNumber
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "ABC123"
+          description: Numéro d'immatriculation
+      responses:
+        "200":
+          description: Véhicule trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehicle"
+        "404":
+          description: Véhicule non trouvé
+        "401":
+          description: Non autorisé
+
+  /vehicles/price/{maxPrice}:
+    get:
+      tags:
+        - Véhicules
+      summary: Filtrer les véhicules par prix maximum
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: maxPrice
+          in: path
+          required: true
+          schema:
+            type: number
+            format: float
+          example: 50.00
+          description: Prix maximum de location
+      responses:
+        "200":
+          description: Liste des véhicules filtrés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehicle"
+        "401":
+          description: Non autorisé
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    idParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID du véhicule
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+    limitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 10
+
+  schemas:
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        registrationNumber:
+          type: string
+          example: "ABC123"
+        make:
+          type: string
+          example: "Toyota"
+        model:
+          type: string
+          example: "Camry"
+        year:
+          type: integer
+          example: 2022
+        rentalPrice:
+          type: number
+          format: float
+          example: 45.50
+        createdAt:
+          type: string
+          format: date-time
+
+    VehicleInput:
+      type: object
+      required:
+        - registrationNumber
+        - make
+        - model
+        - year
+        - rentalPrice
+      properties:
+        registrationNumber:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        rentalPrice:
+          type: number
+          format: float
+
+    VehicleUpdate:
+      type: object
+      properties:
+        registrationNumber:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        rentalPrice:
+          type: number
+          format: float

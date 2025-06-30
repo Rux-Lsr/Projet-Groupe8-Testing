@@ -2,17 +2,17 @@ const pool = require("../config/db");
 const User = require("../entities/user");
 
 class UserRepository {
-  static async create({ name, email, password }) {
+  static async create({ name, password }) {
     const [result] = await pool.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, password] // Password stocké en clair
+      "INSERT INTO users (name, password) VALUES (?, ?)",
+      [name, password]
     );
-    return new User({ id: result.insertId, name, email, password });
+    return new User({ id: result.insertId, name, password });
   }
 
-  static async findByEmail(email) {
-    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
-      email,
+  static async findByName(name) {
+    const [rows] = await pool.query("SELECT * FROM users WHERE name = ?", [
+      name,
     ]);
     return rows[0] ? new User(rows[0]) : null;
   }

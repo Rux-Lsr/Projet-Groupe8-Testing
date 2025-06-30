@@ -22,23 +22,22 @@ afterAll(async () => {
 });
 
 describe("User routes (integration)", () => {
-  it("POST /users/register enregistre un utilisateur", async () => {
+  it("POST /users/register enregistre un utilisateur (sans email ni role)", async () => {
     const res = await request(app).post("/users/register").send({
       name: "Test",
-      email: "test@test.com",
-      password: "1234",
-      role: "user",
+      password: "1234"
     });
     expect(res.status).toBe(201);
-    expect(res.body.email).toBe("test@test.com");
+    expect(res.body).toHaveProperty("id");
+    expect(res.body.name).toBe("Test");
     expect(res.body).toHaveProperty("accessToken");
     expect(res.body).toHaveProperty("refreshToken");
   });
 
-  it("POST /users/login connecte un utilisateur", async () => {
+  it("POST /users/login connecte un utilisateur (par nom)", async () => {
     const res = await request(app)
       .post("/users/login")
-      .send({ email: "admin@propelize.com", password: "admin123" });
+      .send({ name: "Admin", password: "admin123" });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("accessToken");
     expect(res.body).toHaveProperty("refreshToken");

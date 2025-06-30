@@ -8,16 +8,12 @@ export const seedUsers = async () => {
     {
       id: 1,
       name: "Admin",
-      email: "admin@propelize.com",
       password: "admin123",
-      role: "admin",
     },
     {
       id: 2,
       name: "User",
-      email: "user@propelize.com",
       password: "user123",
-      role: "user",
     },
   ];
 };

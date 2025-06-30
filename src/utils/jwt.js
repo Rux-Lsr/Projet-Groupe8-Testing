@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.generateTokens = (user) => {
   const accessToken = jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, name: user.name },
     JWT_SECRET,
     { expiresIn: "15m" } // Token court terme
   );

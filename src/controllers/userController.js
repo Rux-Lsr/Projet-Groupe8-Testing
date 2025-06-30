@@ -8,7 +8,6 @@ exports.register = async (req, res) => {
     res.status(201).json({
       id: user.id,
       name: user.name,
-      email: user.email,
       ...tokens,
     });
   } catch (error) {
@@ -17,11 +16,10 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await UserRepository.findByEmail(email);
+  const { name, password } = req.body;
+  const user = await UserRepository.findByName(name);
 
   if (!user || user.password !== password) {
-    // Comparaison en clair
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
@@ -29,7 +27,6 @@ exports.login = async (req, res) => {
   res.json({
     id: user.id,
     name: user.name,
-    email: user.email,
     ...tokens,
   });
 };

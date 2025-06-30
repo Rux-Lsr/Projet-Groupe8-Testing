@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import VehicleRepository from "../../../src/repositories/VehicleRepository";
-import { mockVehicles, seedVehicles, clearDatabase } from "../../mock-datas-utils";
+import {
+  mockVehicles,
+  seedVehicles,
+  clearDatabase,
+} from "../../mock-datas-utils";
 
 describe("VehicleRepository (mocked)", () => {
   beforeEach(async () => {
@@ -11,38 +15,50 @@ describe("VehicleRepository (mocked)", () => {
       return mockVehicles;
     });
 
-    vi.spyOn(VehicleRepository, "findByRegistration").mockImplementation(async (registrationNumber) => {
-      return mockVehicles.find(v => v.registrationNumber === registrationNumber) || null;
-    });
+    vi.spyOn(VehicleRepository, "findByRegistration").mockImplementation(
+      async (registrationNumber) => {
+        return (
+          mockVehicles.find(
+            (v) => v.registrationNumber === registrationNumber
+          ) || null
+        );
+      }
+    );
 
     vi.spyOn(VehicleRepository, "findById").mockImplementation(async (id) => {
-      return mockVehicles.find(v => v.id === id) || null;
+      return mockVehicles.find((v) => v.id === id) || null;
     });
 
-    vi.spyOn(VehicleRepository, "create").mockImplementation(async (vehicleData) => {
-      const id = mockVehicles.length + 1;
-      const vehicle = { id, ...vehicleData };
-      mockVehicles.push(vehicle);
-      return vehicle;
-    });
+    vi.spyOn(VehicleRepository, "create").mockImplementation(
+      async (vehicleData) => {
+        const id = mockVehicles.length + 1;
+        const vehicle = { id, ...vehicleData };
+        mockVehicles.push(vehicle);
+        return vehicle;
+      }
+    );
 
-    vi.spyOn(VehicleRepository, "update").mockImplementation(async (id, vehicleData) => {
-      const vehicle = mockVehicles.find(v => v.id === id);
-      if (!vehicle) return false;
-      Object.assign(vehicle, vehicleData);
-      return true;
-    });
+    vi.spyOn(VehicleRepository, "update").mockImplementation(
+      async (id, vehicleData) => {
+        const vehicle = mockVehicles.find((v) => v.id === id);
+        if (!vehicle) return false;
+        Object.assign(vehicle, vehicleData);
+        return true;
+      }
+    );
 
     vi.spyOn(VehicleRepository, "delete").mockImplementation(async (id) => {
-      const index = mockVehicles.findIndex(v => v.id === id);
+      const index = mockVehicles.findIndex((v) => v.id === id);
       if (index === -1) return false;
       mockVehicles.splice(index, 1);
       return true;
     });
 
-    vi.spyOn(VehicleRepository, "searchByPrice").mockImplementation(async (maxPrice) => {
-      return mockVehicles.filter(v => v.rentalPrice <= maxPrice);
-    });
+    vi.spyOn(VehicleRepository, "searchByPrice").mockImplementation(
+      async (maxPrice) => {
+        return mockVehicles.filter((v) => v.rentalPrice <= maxPrice);
+      }
+    );
   });
 
   afterEach(() => {
@@ -78,7 +94,9 @@ describe("VehicleRepository (mocked)", () => {
   it("should update vehicle price", async () => {
     const vehicleId = 1;
     const newPrice = 55.0;
-    const updated = await VehicleRepository.update(vehicleId, { rentalPrice: newPrice });
+    const updated = await VehicleRepository.update(vehicleId, {
+      rentalPrice: newPrice,
+    });
     expect(updated).toBe(true);
     const vehicle = await VehicleRepository.findById(vehicleId);
     expect(vehicle.rentalPrice).toBe(newPrice);

@@ -1,10 +1,10 @@
 import pool from "../src/config/db";
 export const seedUsers = async () => {
   await pool.query(`
-    INSERT INTO users (id, name, email, password, role)
+    INSERT INTO users (name, password)
     VALUES 
-      (1, 'Admin', 'admin@propelize.com', 'admin123', 'admin'),
-      (2, 'User', 'user@propelize.com', 'user123', 'user')
+      ('Admin', 'admin123'),
+      ('User', 'user123')
   `);
 };
 

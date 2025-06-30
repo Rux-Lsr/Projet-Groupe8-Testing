@@ -7,16 +7,14 @@ describe("UserRepository (mocked)", () => {
     await clearDatabase();
     await seedUsers();
 
-    vi.spyOn(UserRepository, "findByEmail").mockImplementation(
-      async (email) => {
-        return mockUsers.find((u) => u.email === email) || null;
-      }
-    );
+    vi.spyOn(UserRepository, "findByName").mockImplementation(async (name) => {
+      return mockUsers.find((u) => u.name === name) || null;
+    });
 
     vi.spyOn(UserRepository, "create").mockImplementation(
-      async ({ name, email, password }) => {
+      async ({ name, password }) => {
         const id = mockUsers.length + 1;
-        const user = { id, name, email, password };
+        const user = { id, name, password };
         mockUsers.push(user);
         return user;
       }
@@ -36,30 +34,34 @@ describe("UserRepository (mocked)", () => {
     vi.restoreAllMocks();
   });
 
-  it("should return user with valid email", async () => {
-    const testEmail = "admin@propelize.com";
-    const user = await UserRepository.findByEmail(testEmail);
+  it("should return user with valid name", async () => {
+    const testName = "Admin";
+    const user = await UserRepository.findByName(testName);
     expect(user).toBeDefined();
-    expect(user.email).toBe(testEmail);
+    expect(user.name).toBe(testName);
+    expect(user).toHaveProperty("id");
+    expect(user).toHaveProperty("password");
   });
 
   it("should create a new user", async () => {
     const userData = {
       name: "New User",
-      email: "new@propelize.com",
       password: "newpass123",
     };
     const user = await UserRepository.create(userData);
     expect(user.id).toBeDefined();
     expect(user.name).toBe(userData.name);
+    expect(user).toHaveProperty("password");
   });
 
   it("should update user name", async () => {
-    const user = await UserRepository.findByEmail("admin@propelize.com");
+    const user = await UserRepository.findByName("Admin");
     const newName = "SuperAdmin";
     const updated = await UserRepository.update(user.id, { name: newName });
     expect(updated).toBe(true);
-    const updatedUser = await UserRepository.findByEmail("admin@propelize.com");
-    expect(updatedUser.name).toBe(newName);
+    const updatedUser = await UserRepository.findByName("SuperAdmin");
+    expect(updatedUser.name).toBe(newName);;
+    expect(updatedUser).toHaveProperty("id");
+    expect(updatedUser).toHaveProperty("password");
   });
 });

@@ -333,16 +333,12 @@ components:
   schemas:
     UserRegister:
       type: object
-      required: [name, email, password]
+      required: [name, password]
       properties:
         name:
           type: string
           example: "John Doe"
           minLength: 3
-        email:
-          type: string
-          format: email
-          example: "user@propelize.com"
         password:
           type: string
           format: password
@@ -351,11 +347,11 @@ components:
 
     UserLogin:
       type: object
-      required: [email, password]
+      required: [name, password]
       properties:
-        email:
+        name:
           type: string
-          example: "admin@propelize.com"
+          example: "Admin"
         password:
           type: string
           example: "admin123"
@@ -366,9 +362,6 @@ components:
         name:
           type: string
           example: "Nouveau Nom"
-        email:
-          type: string
-          format: email
         password:
           type: string
           format: password
@@ -384,8 +377,10 @@ components:
           type: string
           description: Token valable 7 jours
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-        user:
-          $ref: "#/components/schemas/UserProfile"
+        id:
+          type: integer
+        name:
+          type: string
 
     UserProfile:
       type: object
@@ -394,11 +389,6 @@ components:
           type: integer
         name:
           type: string
-        email:
-          type: string
-        role:
-          type: string
-          enum: [user, admin]
 
     Error:
       type: object

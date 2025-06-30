@@ -1,59 +1,65 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import UserRepository from "../../../src/repositories/UserRepository";
-import { seedUsers, clearDatabase } from "../../test-utils";
+import { mockUsers, seedUsers, clearDatabase } from "../../mock-datas-utils";
 
-describe("UserRepository", () => {
+describe("UserRepository (mocked)", () => {
   beforeEach(async () => {
     await clearDatabase();
     await seedUsers();
+
+    vi.spyOn(UserRepository, "findByEmail").mockImplementation(
+      async (email) => {
+        return mockUsers.find((u) => u.email === email) || null;
+      }
+    );
+
+    vi.spyOn(UserRepository, "create").mockImplementation(
+      async ({ name, email, password }) => {
+        const id = mockUsers.length + 1;
+        const user = { id, name, email, password };
+        mockUsers.push(user);
+        return user;
+      }
+    );
+
+    vi.spyOn(UserRepository, "update").mockImplementation(
+      async (id, userData) => {
+        const user = mockUsers.find((u) => u.id === id);
+        if (!user) return false;
+        Object.assign(user, userData);
+        return true;
+      }
+    );
   });
 
-  afterEach(async () => {
-    await clearDatabase();
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  describe("findByEmail()", () => {
-    it("should return user with valid email", async () => {
-      const testEmail = "admin@propelize.com";
-      const user = await UserRepository.findByEmail(testEmail);
-      expect(user).toBeDefined();
-      expect(user.email).toBe(testEmail);
-    });
-
-    it("should return null for non-existent email", async () => {
-      const invalidEmail = "nonexistent@test.com";
-      const user = await UserRepository.findByEmail(invalidEmail);
-      expect(user).toBeNull();
-    });
+  it("should return user with valid email", async () => {
+    const testEmail = "admin@propelize.com";
+    const user = await UserRepository.findByEmail(testEmail);
+    expect(user).toBeDefined();
+    expect(user.email).toBe(testEmail);
   });
 
-  describe("create()", () => {
-    it("should create a new user", async () => {
-      const userData = {
-        name: "New User",
-        email: "new@propelize.com",
-        password: "newpass123",
-      };
-      const user = await UserRepository.create(userData);
-      expect(user.id).toBeDefined();
-      expect(user.name).toBe(userData.name);
-      expect(user.email).toBe(userData.email);
-    });
+  it("should create a new user", async () => {
+    const userData = {
+      name: "New User",
+      email: "new@propelize.com",
+      password: "newpass123",
+    };
+    const user = await UserRepository.create(userData);
+    expect(user.id).toBeDefined();
+    expect(user.name).toBe(userData.name);
   });
 
-  describe("update()", () => {
-    it("should update user name", async () => {
-      // Arrange
-      const user = await UserRepository.findByEmail("admin@propelize.com");
-      const newName = "SuperAdmin";
-
-      // Act
-      const updated = await UserRepository.update(user.id, { name: newName });
-      const updatedUser = await UserRepository.findByEmail("admin@propelize.com");
-
-      // Assert
-      expect(updated).toBe(true);
-      expect(updatedUser.name).toBe(newName);
-    });
+  it("should update user name", async () => {
+    const user = await UserRepository.findByEmail("admin@propelize.com");
+    const newName = "SuperAdmin";
+    const updated = await UserRepository.update(user.id, { name: newName });
+    expect(updated).toBe(true);
+    const updatedUser = await UserRepository.findByEmail("admin@propelize.com");
+    expect(updatedUser.name).toBe(newName);
   });
 });

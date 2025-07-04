@@ -7,6 +7,8 @@ UserRouter.post("/register", userController.register);
 UserRouter.post("/login", userController.login);
 UserRouter.post("/refresh-token", userController.refreshToken);
 UserRouter.put("/:id", userController.updateUser);
+UserRouter.get("/", userController.getAllUsers);
+UserRouter.delete("/:id", userController.deleteUser);
 
 // Route protégée exemple
 UserRouter.get("/profile", validate, (req, res) => {

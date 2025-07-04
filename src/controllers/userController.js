@@ -31,6 +31,19 @@ exports.login = async (req, res) => {
   });
 };
 
+
+exports.getAllUsers = async (req, res) => {
+  const users = await UserRepository.getAllUsers();
+  res.json(users);
+};
+
+exports.deleteUser = async (req, res) => {
+  const success = await UserRepository.deleteUser(req.params.id, req.body);
+  success
+    ? res.json({ success: true })
+    : res.status(404).json({ error: "User not found" });
+};
+
 exports.updateUser = async (req, res) => {
   const success = await UserRepository.update(req.params.id, req.body);
   success

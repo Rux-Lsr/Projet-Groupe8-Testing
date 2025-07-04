@@ -26,7 +26,7 @@ jobs:
           npx eslint . || true
           
       - name: Run backend tests (Vitest)
-        run: npm run test
+        run: npm run test:unit
         env:
           NODE_ENV: test
 

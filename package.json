@@ -1,5 +1,5 @@
 {
-  "name": "projet-groupe8-testing",
+  "name": "propelize-web-api",
   "version": "1.0.0",
   "description": "propelize app",
   "main": "index.js",
@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.53.2",
+    "nodemon": "^3.1.10",
     "playwright": "^1.53.2",
     "supertest": "^7.1.1",
     "vitest": "^3.2.4"

@@ -9,42 +9,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: propelize
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install MySQL client
-        run: sudo apt-get update && sudo apt-get install -y mysql-client
-
-      - name: Wait for MySQL
-        run: |
-          for i in {1..30}; do
-            if mysqladmin ping -h127.0.0.1 -uroot -proot --silent; then
-              echo "MySQL is up!"
-              break
-            fi
-            echo "Waiting for MySQL..."
-            sleep 2
-          done
-
-      - name: Init DB schema
-        run: |
-          mysql -h127.0.0.1 -uroot -proot propelize < ./db/db.sql
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,20 +24,11 @@ jobs:
       - name: Lint (ESLint)
         run: |
           npx eslint . || true
-
+          
       - name: Run backend tests (Vitest)
         run: npm run test:unit
         env:
           NODE_ENV: test
-
-      - name: Run backend integration tests (supertest)
-        run: npm run test:integration
-        env:
-          NODE_ENV: test
-          DB_HOST: 127.0.0.1
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: propelize
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps

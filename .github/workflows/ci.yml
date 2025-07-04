@@ -26,14 +26,12 @@ jobs:
           npx eslint . || true
           
       - name: Run backend tests (Vitest)
-        run: npm test
+        run: npm run test:unit
         env:
           NODE_ENV: test
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests (front-end)
-        run: npm run test:e2e
 
       

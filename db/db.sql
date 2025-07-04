@@ -1,3 +1,7 @@
+drop database if exists propelize;
+create database propelize;
+use propelize;
+
 -- Table des véhicules
 CREATE TABLE IF NOT EXISTS vehicles (
   id INT AUTO_INCREMENT PRIMARY KEY,

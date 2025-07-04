@@ -1,5 +1,6 @@
 const UserRepository = require("../repositories/UserRepository");
 const { generateTokens } = require("../utils/jwt");
+const jwt = require("jsonwebtoken"); // Ajout de l'import manquant
 
 exports.register = async (req, res) => {
   try {
@@ -16,26 +17,34 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { name, password } = req.body;
-  const user = await UserRepository.findByName(name);
+  try {
+    const { name, password } = req.body;
+    const user = await UserRepository.findByName(name);
 
-  if (!user || user.password !== password) {
-    return res.status(401).json({ error: "Invalid credentials" });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const tokens = generateTokens(user);
+    res.json({
+      id: user.id,
+      name: user.name,
+      ...tokens,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-
-  const tokens = generateTokens(user);
-  res.json({
-    id: user.id,
-    name: user.name,
-    ...tokens,
-  });
 };
 
 exports.updateUser = async (req, res) => {
-  const success = await UserRepository.update(req.params.id, req.body);
-  success
-    ? res.json({ success: true })
-    : res.status(404).json({ error: "User not found" });
+  try {
+    const success = await UserRepository.update(req.params.id, req.body);
+    success
+      ? res.json({ success: true })
+      : res.status(404).json({ error: "User not found" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 exports.refreshToken = (req, res) => {
@@ -69,5 +78,22 @@ exports.refreshToken = (req, res) => {
       error: "Invalid refresh token",
       details: error.message,
     });
+  }
+};
+
+    // Logique de suppression selon votre base de données
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const deletedUser = await UserRepository.delete(id);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    
+    res.status(200).json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la suppression', error: error.message });
   }
 };

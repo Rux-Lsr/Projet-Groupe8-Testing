@@ -9,8 +9,9 @@
     "test": "vitest run",
     "test:unit": "vitest run tests/unit/",
     "test:integration": "vitest run tests/integration/",
+    "test:e2e": "npx playwright playwright-test",
     "seed": "node scripts/seed.js",
-    "test:e2e": "npx playwright playwright-test"
+    "db:up": "docker-compose up -d mysql"
   },
   "repository": {
     "type": "git",

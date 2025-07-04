@@ -6,9 +6,11 @@ const userController = require("../controllers/userController");
 UserRouter.post("/register", userController.register);
 UserRouter.post("/login", userController.login);
 UserRouter.post("/refresh-token", userController.refreshToken);
-UserRouter.put("/:id", userController.updateUser);
 
-// Route protégée exemple
+UserRouter.put("/:id", userController.updateUser);
+UserRouter.delete("/:id", userController.deleteUser); 
+
+
 UserRouter.get("/profile", validate, (req, res) => {
   res.json({ user: req.user });
 });

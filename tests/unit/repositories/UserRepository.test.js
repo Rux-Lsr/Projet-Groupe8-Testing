@@ -1,11 +1,27 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import UserRepository from "../../../src/repositories/UserRepository";
-import { mockUsers, seedUsers, clearDatabase } from "../../mock-datas-utils";
+import {
+  mockUsers,
+  seedUsers,
+  clearDatabase,
+  mockVehicles,
+} from "../../mock-datas-utils";
 
 describe("UserRepository (mocked)", () => {
   beforeEach(async () => {
     await clearDatabase();
     await seedUsers();
+
+    vi.spyOn(UserRepository, "getAll").mockImplementation(async () => {
+      return mockUsers;
+    });
+
+    vi.spyOn(UserRepository, "delete").mockImplementation(async (id) => {
+      const index = mockUsers.findIndex((u) => u.id === id);
+      if (index === -1) return false;
+      mockUsers.splice(index, 1);
+      return true;
+    });
 
     vi.spyOn(UserRepository, "findByName").mockImplementation(async (name) => {
       return mockUsers.find((u) => u.name === name) || null;
@@ -60,8 +76,31 @@ describe("UserRepository (mocked)", () => {
     const updated = await UserRepository.update(user.id, { name: newName });
     expect(updated).toBe(true);
     const updatedUser = await UserRepository.findByName("SuperAdmin");
-    expect(updatedUser.name).toBe(newName);;
+    expect(updatedUser.name).toBe(newName);
     expect(updatedUser).toHaveProperty("id");
     expect(updatedUser).toHaveProperty("password");
+  });
+
+  it("should return all users", async () => {
+    const users = await UserRepository.getAll();
+    expect(users).toBeInstanceOf(Array);
+    expect(users.length).toBeGreaterThan(0);
+    expect(users[0]).toHaveProperty("id");
+    expect(users[0]).toHaveProperty("name");
+    expect(users[0]).toHaveProperty("password");
+  });
+
+  it("should delete an existing user", async () => {
+    const user = await UserRepository.findByName("Admin");
+    const result = await UserRepository.delete(user.id);
+    expect(result).toBe(true);
+
+    const deletedUser = await UserRepository.findByName("Admin");
+    expect(deletedUser).toBeNull();
+  });
+
+  it("should fail to delete a non-existing user", async () => {
+    const result = await UserRepository.delete(9999); // id qui n'existe pas
+    expect(result).toBe(false);
   });
 });

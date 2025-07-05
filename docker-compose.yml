@@ -2,7 +2,6 @@ version: "3"
 services:
   api:
     build: .
-    image: propelize-web-api
     ports:
       - "3000:3000"
     depends_on:

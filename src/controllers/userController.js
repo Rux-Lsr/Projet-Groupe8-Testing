@@ -23,7 +23,7 @@ exports.login = async (req, res) => {
   if (!user || user.password !== password) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
-
+  console.log("dsfsdfsdfsdfs");
   const tokens = generateTokens(user);
   res.json({
     id: user.id,

@@ -4,14 +4,14 @@ test("Ajout d'un utilisateur et vérification dans la liste", async ({
   page,
 }) => {
   // Connexion
-  await page.goto("http://localhost:5500/interfaces/login.html");
+  await page.goto("http://localhost:5500/login.html");
   await page.fill('input[name="name"]', "Admin");
   await page.fill('input[name="password"]', "admin123");
   await page.click('button[type="submit"]');
-  await page.waitForURL("**/vehicles.html");
+  await page.waitForURL("http://localhost:5500/vehicle.html");
   // Aller à la page utilisateurs
   await page.click('a[href="/users.html"]');
-  await page.waitForURL("**/users.html");
+  await page.waitForURL("http://localhost:5500/users.html");
   // Ajouter un utilisateur
   await page.click("button.add-btn");
   await page.fill('input[name="name"]', "TestUser");

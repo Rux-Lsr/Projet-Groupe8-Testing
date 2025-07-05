@@ -10,7 +10,7 @@
     "test:unit": "vitest run tests/unit/",
     "test:integration": "vitest run tests/integration/",
     "seed": "node scripts/seed.js",
-    "test:e2e": "npx playwright playwright-test"
+    "test:e2e": "npx playwright test tests/e2e/ --headed"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,7 @@
 # Propelize – Projet Groupe 8
 
 ## Prérequis
+
 - Node.js >= 18
 - Docker & Docker Compose (pour la base de données)
 - MySQL (si vous ne souhaitez pas utiliser Docker)
@@ -8,12 +9,14 @@
 ## Installation
 
 1. **Cloner le dépôt**
+
    ```sh
    git clone https://github.com/Rux-Lsr/Projet-Groupe8-Testing.git
    cd Projet-Groupe8-Testing
    ```
 
 2. **Installer les dépendances Node.js**
+
    ```sh
    npm install
    ```
@@ -58,6 +61,10 @@ npm run seed
   ```sh
   npm run test:integration
   ```
+- **End to End** :
+  ```sh
+  npm run test:e2e
+  ```
 
 ## Documentation API (Swagger)
 
@@ -66,14 +73,15 @@ npm run seed
 
 ## Scripts disponibles
 
-| Commande              | Description                                 |
-|----------------------|---------------------------------------------|
-| npm run dev          | Démarre l'API en mode développement         |
-| npm start            | Démarre l'API (prod)                        |
-| npm run seed         | Exécute le script de seed (remplit la BDD)  |
-| npm test             | Lance tous les tests                        |
-| npm run test:unit    | Lance les tests unitaires                   |
-| npm run test:integration | Lance les tests d'intégration           |
+| Commande                 | Description                                |
+| ------------------------ | ------------------------------------------ |
+| npm run dev              | Démarre l'API en mode développement        |
+| npm start                | Démarre l'API (prod)                       |
+| npm run seed             | Exécute le script de seed (remplit la BDD) |
+| npm test                 | Lance tous les tests                       |
+| npm run test:unit        | Lance les tests unitaires                  |
+| npm run test:integration | Lance les tests d'intégration              |
+| npm run test:e2e         | Lance les tests end to end                 |
 
 ## Structure du projet
 
@@ -83,6 +91,7 @@ npm run seed
 - `scripts/seed.js` : Script Node.js pour insérer les seeds
 
 ## Notes
+
 - Les utilisateurs n'ont que les champs : `id`, `name`, `password`.
 - Les tokens JWT sont nécessaires pour accéder à la plupart des routes.
 - La documentation Swagger est toujours à jour avec le code.

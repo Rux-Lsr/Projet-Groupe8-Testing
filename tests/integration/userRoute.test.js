@@ -25,7 +25,7 @@ describe("User routes (integration)", () => {
   it("POST /users/register enregistre un utilisateur (sans email ni role)", async () => {
     const res = await request(app).post("/users/register").send({
       name: "Test",
-      password: "1234"
+      password: "1234",
     });
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("id");
@@ -49,5 +49,15 @@ describe("User routes (integration)", () => {
     expect(res.body.success).toBe(true);
   });
 
-  // Pour GET /users/profile, il faut gérer l'authentification dans le test
+  it("DELETE /users/:id Supprime un utilisateur", async () => {
+    const res = await request(app).delete("/users/1");
+    expect(res.status).toBe(204);
+  });
+
+  it("GET /users recuperer tous les utilisateurs", async () => {
+    const res = await request(app).get("/users");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
 });

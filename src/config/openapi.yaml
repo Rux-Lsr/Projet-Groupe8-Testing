@@ -4,15 +4,30 @@ info:
   version: 1.0.0
   description: |
     API de gestion des utilisateurs et des véhicules pour le système de location Propelize.
-    **Permissions requises :**
-    - Certaines routes nécessitent un token JWT valide
-    - Seuls les admins peuvent modifier d'autres utilisateurs
 
 servers:
   - url: http://localhost:3000/api
     description: Serveur de développement
 
 paths:
+  /users:
+    get:
+      tags: [Utilisateurs]
+      summary: Récupérer tous les utilisateurs
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Liste des utilisateurs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Non authentifié
+
   /users/register:
     post:
       tags: [Utilisateurs]
@@ -125,6 +140,18 @@ paths:
         "404":
           description: Utilisateur non trouvé
 
+    delete:
+      tags: [Utilisateurs]
+      summary: Supprimer un utilisateur
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "204":
+          description: Utilisateur supprimé
+        "404":
+          description: Utilisateur non trouvé
   /vehicles:
     post:
       tags:

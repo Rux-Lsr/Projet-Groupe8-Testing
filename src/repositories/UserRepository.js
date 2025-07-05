@@ -24,6 +24,16 @@ class UserRepository {
     ]);
     return result.affectedRows > 0;
   }
+
+  static async getAll() {
+    const [rows] = await pool.query("SELECT id, name, password FROM users");
+    return rows.map((row) => new User(row));
+  }
+
+  static async delete(id) {
+    const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
+    return result.affectedRows > 0;
+  }
 }
 
 module.exports = UserRepository;

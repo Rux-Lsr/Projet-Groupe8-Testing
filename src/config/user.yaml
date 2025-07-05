@@ -18,15 +18,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRegister'
+              $ref: "#/components/schemas/UserRegister"
       responses:
-        '201':
+        "201":
           description: Utilisateur créé avec tokens
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '400':
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
           description: |
             Erreurs possibles :
             - Email déjà utilisé
@@ -34,7 +34,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
   /users/login:
     post:
@@ -45,20 +45,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserLogin'
+              $ref: "#/components/schemas/UserLogin"
       responses:
-        '200':
+        "200":
           description: Connexion réussie
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '401':
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
           description: Identifiants invalides
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
   /users/refresh-token:
     post:
@@ -76,7 +76,7 @@ paths:
                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
               required: [refreshToken]
       responses:
-        '200':
+        "200":
           description: Nouveau token généré
           content:
             application/json:
@@ -85,7 +85,7 @@ paths:
                 properties:
                   accessToken:
                     type: string
-        '401':
+        "401":
           description: Refresh token invalide ou expiré
 
   /users/{id}:
@@ -95,15 +95,15 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/UserId'
+        - $ref: "#/components/parameters/UserId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdate'
+              $ref: "#/components/schemas/UserUpdate"
       responses:
-        '200':
+        "200":
           description: Utilisateur mis à jour
           content:
             application/json:
@@ -114,11 +114,24 @@ paths:
                     type: boolean
                   message:
                     type: string
-        '403':
+        "403":
           description: |
             Interdit :
             - Tentative de modification d'un autre utilisateur sans droits admin
-        '404':
+        "404":
+          description: Utilisateur non trouvé
+
+    delete:
+      tags: [Utilisateurs]
+      summary: Supprimer un utilisateur
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "204":
+          description: Utilisateur supprimé
+        "404":
           description: Utilisateur non trouvé
 
   /users/profile:
@@ -128,13 +141,13 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Profil utilisateur
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfile'
-        '401':
+                $ref: "#/components/schemas/UserProfile"
+        "401":
           description: Non authentifié
 
 components:
@@ -209,7 +222,7 @@ components:
           description: Token valable 7 jours
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         user:
-          $ref: '#/components/schemas/UserProfile'
+          $ref: "#/components/schemas/UserProfile"
 
     UserProfile:
       type: object

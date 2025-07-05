@@ -2,6 +2,7 @@ const UserRepository = require("../repositories/UserRepository");
 const { generateTokens } = require("../utils/jwt");
 
 exports.register = async (req, res) => {
+  console.log("enregistrement du user");
   try {
     const user = await UserRepository.create(req.body);
     const tokens = generateTokens(user);
@@ -70,4 +71,20 @@ exports.refreshToken = (req, res) => {
       details: error.message,
     });
   }
+};
+
+exports.users = async (req, res) => {};
+
+exports.getAllUsers = async (req, res) => {
+  console.log("ssdfsdfsdfsdfs");
+  const users = await UserRepository.getAll();
+  console.log(users);
+  res.status(200).json(users);
+};
+
+exports.deleteUser = async (req, res) => {
+  const deleted = await UserRepository.delete(req.params.id);
+  deleted
+    ? res.status(204).end()
+    : res.status(404).json({ error: "Users not found" });
 };
